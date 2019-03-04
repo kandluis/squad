@@ -7,6 +7,14 @@ Author:
 import argparse
 
 
+def get_setup_bert_args():
+  """Get arguments needed in setup_bert.py"""
+  parser = argparse.ArgumentParser(
+      'Download and pre-process SQuAD for BERT LM.')
+
+  add_common_args(parser)
+
+
 def get_setup_args():
   """Get arguments needed in setup.py."""
   parser = argparse.ArgumentParser('Download and pre-process SQuAD')
