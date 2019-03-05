@@ -679,9 +679,6 @@ def eval_dicts(gold_dict, pred_dict, no_answer: bool):
   avna = f1 = em = total = 0
   for key, value in pred_dict.items():
     total += 1
-    if key not in gold_dict:
-      print("key %s not found in goldens!" % key)
-      continue
     ground_truths = gold_dict[key]['answers']
     prediction = value
     em += metric_max_over_ground_truths(compute_em, prediction, ground_truths)

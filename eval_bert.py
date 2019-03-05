@@ -1,4 +1,6 @@
 import argparse
+import csv
+import os
 from ujson import load as json_load
 
 import typing
@@ -17,6 +19,15 @@ def get_setup_args():
       '--result_file_path',
       type=str,
       default='../BERT/save/bert-base-uncased/predictions.json')
+  parser.add_argument(
+      '--write_predictions_csv',
+      dest='write_predictions_csv',
+      action='store_true')
+  parser.add_argument(
+      '--no-write_predictions_csv',
+      dest='write_predictions_csv',
+      action='store_false')
+  parser.set_defaults(write_predictions_csv=True)
   args = parser.parse_args()
   return args
 
@@ -45,6 +56,18 @@ def evaluate_bert(args):
 
   use_squad_v2: bool = True
   results = util.eval_dicts(gold_dict, pred_dict, use_squad_v2)
+
+  if args.write_predictions_csv:
+    path, filename = os.path.split(eval_file_path)
+    filename = ".".join(filename.split(".")[:-1])
+    sub_path = os.path.join(path, filename) + ".csv"
+    print("Saving results to: %s" % sub_path)
+    with open(sub_path, 'w', newline='', encoding='utf-8') as csv_fh:
+      csv_writer = csv.writer(csv_fh, delimiter=',')
+      csv_writer.writerow(['Id', 'Predicted'])
+      for uuid in sorted(pred_dict):
+        csv_writer.writerow([uuid, pred_dict[uuid]])
+
   return results
 
 
