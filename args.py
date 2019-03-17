@@ -7,12 +7,85 @@ Author:
 import argparse
 
 
+def add_common_setup_args(parser):
+  parser.add_argument(
+      '--ans_limit',
+      type=int,
+      default=30,
+      help='Max number of words in a training example answer')
+  parser.add_argument(
+      '--char_limit',
+      type=int,
+      default=16,
+      help='Max number of chars to keep from a word')
+  parser.add_argument(
+      '--include_test_examples',
+      type=lambda s: s.lower().startswith('t'),
+      default=True,
+      help='Process examples from the test set')
+
+
 def get_setup_bert_args():
   """Get arguments needed in setup_bert.py"""
   parser = argparse.ArgumentParser(
       'Download and pre-process SQuAD for BERT LM.')
 
   add_common_args(parser)
+  add_common_setup_args(parser)
+
+  parser.add_argument(
+      "--bert_model",
+      default=None,
+      type=str,
+      required=True,
+      help="Bert pre-trained model selected in the list: bert-base-uncased, "
+      "bert-large-uncased, bert-base-cased, bert-large-cased, bert-base-multilingual-uncased, "
+      "bert-base-multilingual-cased, bert-base-chinese.")
+  parser.add_argument(
+      "--train_file",
+      default=None,
+      type=str,
+      help="SQuAD json for training. E.g., train-v2.0.json")
+  parser.add_argument(
+      "--dev_file",
+      default=None,
+      type=str,
+      help="SQuAD json for development. E.g. dev-v.2.0.json")
+  parser.add_argument(
+      "--test_file",
+      default=None,
+      type=str,
+      help="SQuAD json for test. E.g. test-v.2.0.json")
+  parser.add_argument(
+      '--do_lower_case',
+      type=lambda s: s.lower().startswith('t'),
+      default=True,
+      help='Whether to use lowecase in BERT tokenization.')
+  parser.add_argument(
+      "--max_seq_length",
+      default=384,
+      type=int,
+      help=
+      "The maximum total input sequence length after WordPiece tokenization. Sequences "
+      "longer than this will be truncated, and sequences shorter than this will be padded."
+  )
+  parser.add_argument(
+      "--doc_stride",
+      default=128,
+      type=int,
+      help=
+      "When splitting up a long document into chunks, how much stride to take between chunks."
+  )
+  parser.add_argument(
+      "--max_query_length",
+      default=64,
+      type=int,
+      help=
+      "The maximum number of tokens for the question. Questions longer than this will "
+      "be truncated to this length.")
+
+  args = parser.parse_args()
+  return args
 
 
 def get_setup_args():
@@ -20,6 +93,7 @@ def get_setup_args():
   parser = argparse.ArgumentParser('Download and pre-process SQuAD')
 
   add_common_args(parser)
+  add_common_setup_args(parser)
 
   parser.add_argument(
       '--train_url',
@@ -47,26 +121,6 @@ def get_setup_args():
       '--char2idx_file', type=str, default='./data/char2idx.json')
   parser.add_argument('--answer_file', type=str, default='./data/answer.json')
   parser.add_argument(
-      '--para_limit',
-      type=int,
-      default=400,
-      help='Max number of words in a paragraph')
-  parser.add_argument(
-      '--ques_limit',
-      type=int,
-      default=50,
-      help='Max number of words to keep from a question')
-  parser.add_argument(
-      '--test_para_limit',
-      type=int,
-      default=1000,
-      help='Max number of words in a paragraph at test time')
-  parser.add_argument(
-      '--test_ques_limit',
-      type=int,
-      default=100,
-      help='Max number of words in a question at test time')
-  parser.add_argument(
       '--char_dim',
       type=int,
       default=64,
@@ -81,21 +135,6 @@ def get_setup_args():
       type=int,
       default=2196017,
       help='Number of GloVe vectors')
-  parser.add_argument(
-      '--ans_limit',
-      type=int,
-      default=30,
-      help='Max number of words in a training example answer')
-  parser.add_argument(
-      '--char_limit',
-      type=int,
-      default=16,
-      help='Max number of chars to keep from a word')
-  parser.add_argument(
-      '--include_test_examples',
-      type=lambda s: s.lower().startswith('t'),
-      default=True,
-      help='Process examples from the test set')
 
   args = parser.parse_args()
 

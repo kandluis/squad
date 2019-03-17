@@ -9,6 +9,28 @@ import torch
 import torch.nn as nn
 
 
+class BiDAFBERTEmbeddings(nn.Module):
+  """Baseline BiDAF model for SQuAD using BERT pre-trained embeddings"""
+
+  def __init__(self, word_vectors, hidden_size, drop_prob=0.):
+    super(BiDAFBERTEmbeddings, self).__init__()
+    self.emb = None  # TODO: BertEmbeddings.
+
+    self.enc = layers.RNNEncoder(
+        input_size=None,
+        hidden_size=hidden_size,
+        num_layers=1,
+        drop_prob=drop_prob)
+    self.att = layers.BiDAFAttention(
+        hidden_size=2 * hidden_size, drop_prob=drop_prob)
+    self.mod = layers.RNNEncoder(
+        input_size=8 * hidden_size,
+        hidden_size=hidden_size,
+        num_layers=2,
+        drop_prob=drop_prob)
+    self.out = layer.BiDAFOutput(hidden_size=hidden_size, drop_prob=drop_prob)
+
+
 class BiDAF(nn.Module):
   """Baseline BiDAF model for SQuAD.
 
